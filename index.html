@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Encode/Decoder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-white dark:bg-gray-900 transition-colors duration-300">
+    <!-- Password Modal -->
+    <div id="password-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-lock text-primary-600"></i>
+                    Enter Decode Password
+                </h3>
+            </div>
+            <div class="p-6">
+                <div class="mb-4">
+                    <label for="password-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                    <input 
+                        type="password" 
+                        id="password-input" 
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
+                        placeholder="Enter premium password">
+                </div>
+                <div class="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                    <p>You must enter the correct password to decode JS code.</p>
+                    <p>To get the password, click "Get Password" button below.</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button 
+                        id="submit-password" 
+                        class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg flex-1"
+                    >
+                        <i class="fas fa-check mr-2"></i> Submit
+                    </button>
+                    <button 
+                        id="get-password" 
+                        class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg flex-1"
+                    >
+                        <i class="fab fa-whatsapp mr-2"></i> Get Password
+                    </button>
+                    <button 
+                        id="cancel-password" 
+                        class="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white rounded-lg flex-1"
+                    >
+                        <i class="fas fa-times mr-2"></i> Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-white dark:bg-gray-800 shadow-sm py-4 px-6 rounded-lg">
+            <div class="container mx-auto flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
+                    <span class="text-primary-600 dark:text-primary-400">JS</span>Encoder
+                </h1>
+                <div class="flex items-center gap-4">
+                    <!-- Light mode button (shown in dark mode) -->
+                    <button id="light-toggle" class="p-2 rounded-lg hidden dark:flex items-center justify-center bg-yellow-100 dark:bg-yellow-500 text-yellow-600 dark:text-white">
+                        <i class="fas fa-sun"></i>
+                    </button>
+                    <!-- Dark mode button (shown in light mode) -->
+                    <button id="dark-toggle" class="p-2 rounded-lg flex dark:hidden items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow container mx-auto px-4 py-8">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden p-6 mb-8 border border-gray-200 dark:border-gray-700">
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">JavaScript Encode/Decoder</h2>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6">Encode or decode JavaScript code for security or compression purposes</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="js-input" class="block text-sm font-medium text-gray-700 dark:text-blue-300 mb-2">JavaScript Code</label>
+                            <div class="relative">
+                                <textarea 
+                                    id="js-input" 
+                                    rows="10" 
+                                    class="code-container w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white font-mono text-sm" 
+                                    placeholder="Paste your JavaScript code here..."></textarea>
+                                <div class="absolute top-2 right-2 flex gap-1">
+                                    <button id="clear-input" class="p-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-white rounded text-xs">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="js-output" class="block text-sm font-medium text-gray-700 dark:text-blue-300 mb-2">Result</label>
+                            <div class="relative">
+                                <textarea 
+                                    id="js-output" 
+                                    rows="10" 
+                                    class="code-container w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white font-mono text-sm" 
+                                    placeholder="Result will appear here..." 
+                                    readonly></textarea>
+                                <div class="absolute top-2 right-2 flex gap-1">
+                                    <button id="copy-output" class="p-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-white rounded text-xs">
+                                        <i class="far fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-3">
+                        <button 
+                            id="encode-btn" 
+                            class="btn-3d btn-3d-primary px-6 py-3 text-white font-medium rounded-lg flex items-center justify-center gap-2"
+                        >
+                            <i class="fas fa-lock"></i> Encode JS
+                        </button>
+                        <button 
+                            id="decode-btn" 
+                            class="btn-3d btn-3d-secondary px-6 py-3 text-white font-medium rounded-lg flex items-center justify-center gap-2"
+                        >
+                            <i class="fas fa-lock-open"></i> Decode JS
+                        </button>
+                        <button 
+                            id="test-btn" 
+                            class="btn-3d btn-3d-secondary px-6 py-3 text-white font-medium rounded-lg flex items-center justify-center gap-2"
+                        >
+                            <i class="fas fa-vial"></i> Test in Console
+                        </button>
+                    </div>
+                    
+                    <div id="error-message" class="hidden mt-4 p-3 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded-lg">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        <span id="error-text"></span>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/10 rounded-lg border border-blue-200 dark:border-blue-900/20">
+                        <h4 class="font-medium text-blue-800 dark:text-blue-200 mb-2 flex items-center gap-2">
+                            <i class="fas fa-info-circle"></i> Usage Guide
+                        </h4>
+                        <ul class="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+                            <li><span class="font-medium">Encode:</span> Convert JavaScript code to secure encoded string</li>
+                            <li><span class="font-medium">Decode:</span> Premium feature - requires password to decode</li>
+                            <li><span class="font-medium">Test:</span> Run decoded code in browser console</li>
+                            <li>Encoded code can be read by HTML via <code class="bg-blue-100 dark:bg-blue-900/30 px-1 rounded">eval()</code> or <code class="bg-blue-100 dark:bg-blue-900/30 px-1 rounded">function</code></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+       <!-- Footer -->
+<footer class="bg-blue-50 dark:bg-blue-900/10 text-blue-800 dark:text-blue-200 py-8 border-t border-blue-200 dark:border-blue-900/20 rounded-lg">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row items-center gap-6">
+            <!-- Profile Image (Circular) -->
+            <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-primary-500 dark:border-primary-400">
+                <img src="https://i.imghippo.com/files/dMz3470tU.png" alt="Profile" class="w-full h-full object-cover">
+            </div>
+            
+            <!-- Title and Description -->
+            <div class="flex-1 text-center md:text-left">
+                <h3 class="text-xl font-bold mb-1">JSEncoder</h3>
+                <p class="text-sm text-blue-600 dark:text-blue-300 mb-2">Created by Freds</p>
+                <p class="text-sm text-blue-700 dark:text-blue-300">
+                    A premium JavaScript encoding/decoding tool with password protection. 
+                    Keep your code secure while maintaining compatibility with your projects.
+                </p>
+            </div>
+            
+            <!-- Social Links -->
+            <div class="flex space-x-4">
+                <a href="https://github.com/MyFreds" class="text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100 transition-colors">
+                    <i class="fab fa-github fa-lg"></i>
+                </a>
+                <a href="https://instagram.com/my.freds" class="text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100 transition-colors">
+                    <i class="fab fa-instagram fa-lg"></i>
+                </a>
+                <a href="https://www.tiktok.com/@code.freds?_t=ZS-8xFmOcEOQU6&_r=1" class="text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100 transition-colors">
+                    <i class="fab fa-tiktok fa-lg"></i>
+                </a>
+                <a href="mailto:id.luxy.store@gmail.com" class="text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100 transition-colors">
+                    <i class="fas fa-envelope fa-lg"></i>
+                </a>
+            </div>
+        </div>
+        <div class="border-t border-blue-200 dark:border-blue-900/20 mt-6 pt-6 text-sm text-center">
+            <p>© Fred 2025 JSEncoder. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+      </div>
+                    
+                    
+    <script src="script.js"></script>
+</body>
+</html>
